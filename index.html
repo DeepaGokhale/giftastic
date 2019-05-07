@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>GifTastic</title>
-    <!-- <link type="javascript" href="javascript/gifApp.js">          -->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">      
+    <!-- <script type="text/javascript" src="javascript/gifApp.js"></script>   -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>    
+    <title>GifTastic</title>  
 </head>
 <body>
     <div class="container">
@@ -17,13 +19,10 @@
             <input type="text" id="story-input">
             <input id="add-story" type="submit" value="Add favorite story" class= "btn-primary">            
         </form>
+        <div id="gif-list"></div>
 
-        <div id="gif-list">
-        </div>
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>      
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />     
-        <script type="text/javascript">
+        <!-- <script type="text/javascript" src="javascript/gifApp.js"></script>   -->
+        <script type="text/javascript">                
             var stories = ["Donald duck", "Tom and Jerry", "Lion King", "Cinderella", "The Jungle Book", "Aristocats", "Lilo and Stitch", "Alladin", "Pocahontas"];
 
             function renderbuttons(){           
@@ -80,10 +79,10 @@
                     }
                     // console.log(button);                
                 }
-            }
+            }            
 
             $(document).ready(function() {
-                renderbuttons();
+                renderbuttons();                
 
                 $("#add-story").on("click", function(event){
                     event.preventDefault();
@@ -105,22 +104,58 @@
                     }).then(function(response){
                         $("#gif-list").empty();
                         var results = response.data;
+                        var max;
                         console.log(results);
+                        if (results.length >= 10)
+                        {
+                            max = 10;
+                        }
+                        else
+                        {
+                            max = results.length
+                        }
+                        
                         for (i=0; i<11; i++)
                         {
-                            var newGif = $("<img class='imgClass thumbnail gif'>");
-                            var gif = results[i].images.original.url;
-                            var still = results[i].images.original_still.url;
+                            var newGif = $("<img>");
+                            var gifDiv = $("<div>");
+                            gifDiv.addClass("gifDiv");
+                            var img = results[i];
+                            var gif = img.images.original.url;
+                            var still = img.images.original_still.url;
                             newGif.attr("src", gif);
-                            newGif.attr("still", still);
-                            newGif.attr("giffy", gif);
+                            newGif.attr("data-still", still);
+                            newGif.attr("data-giffy", gif);
                             newGif.attr("state", "giffy");
-                            $("#gif-list").append(newGif);
+                            newGif.addClass("giff");
+                            gifDiv.append(newGif);
+                            $("#gif-list").append(gifDiv);
                             //  console.log(still);
                         }
                     });
                 });
+
+                $(".giff").on("click", function(){
+                var state = $(this).attr("state");    
+                var newSrc;        
+
+                if (state == "giffy")
+                {
+                    //make it still
+                    newSrc = $(this).attr("data-still");
+                    // console.log(newSrc);
+                    $(this).attr("src", newSrc);
+                    $(this).attr("state", "still");
+                }
+                else
+                {
+                    newSrc = $(this).attr("data-giffy");
+                    // console.log(newSrc);
+                    $(this).attr("src", newSrc);
+                    $(this).attr("state", "giffy");
+                }
             });
+        });
         </script>
     </div>
 </body>
