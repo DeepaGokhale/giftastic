@@ -93,9 +93,10 @@
                     renderbuttons();
                 });
 
-                $(".stories").on("click", function(){
+                $(document).on("click",".stories", function(){
                     event.preventDefault();
                     var currentStory = $(this).text();
+                    console.log(currentStory);
                     var storyURL = "https://api.giphy.com/v1/gifs/search?q=" + currentStory + "&api_key=btMtfPice0q1trfV84l1O3VnUU3W3fKn&limit=10";
 
                     $.ajax({
@@ -135,9 +136,12 @@
                     });
                 });
 
-                $(".giff").on("click", function(){
-                var state = $(this).attr("state");    
-                var newSrc;        
+            //$(".giff").on("click", function(){                
+            $(document).on("click",".giff", function(){
+
+                var state = $(this).attr("state");         
+                console.log("I am clicked!" + state);
+                var newSrc;   
 
                 if (state == "giffy")
                 {
