@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GifTastic</title>
+    <!-- <link type="javascript" href="javascript/gifApp.js">          -->
+</head>
+<body>
+    <div class="container">
+        <div id = "buttons-list">       
+        </div>
+    
+        <form id="disney-form">
+            <lable for="story-input">Add your favorite animated stories!</lable>
+            <input type="text" id="story-input">
+            <input id="add-story" type="submit" value="Add favorite story" class= "btn-primary">            
+        </form>
+
+        <div id="gif-list">
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />     
+        <script type="text/javascript">
+            var stories = ["Donald duck", "Tom and Jerry", "Lion King", "Cinderella", "The Jungle Book", "Aristocats", "Lilo and Stitch", "Alladin", "Pocahontas"];
+
+            function renderbuttons(){           
+                let x = 0;
+                var divId = "div" + x;
+                var lineId = "div" + x;
+                var newDiv;
+                var lineDiv;     
+                for(i=0; i<stories.length; i++)
+                {
+                    var thisRow = i - (x * 4);                
+                    var name = stories[i].split(" ")[0];
+                    var button;
+                    //console.log("This row is: " + thisRow);
+                    if(thisRow == 0 || thisRow == 5){
+                        //create the new div to hold buttons                    
+                        x++;                    
+                        if (x%2 == 0)
+                        {
+                            button = $("<button class='stories btn-default'>");               
+                        }
+                        else
+                        {
+                            button = $("<button class='stories btn-primary'>");
+                        } 
+                        button.attr("id", name);
+                        button.text(stories[i]);    
+                        button.css("margin", "0px");
+                        newDiv = $("<div class= 'row " + divId + "' >");
+                        lineDiv = $("<div class= 'col-md-3 " + lineId + "'>"); 
+                        lineDiv.css("margin-bottom", "15px");
+                        lineDiv.append(button);
+                        newDiv.append(lineDiv);
+                        $("#buttons-list").append(newDiv);                             
+                    }
+                    else if(thisRow < 5)
+                    {               
+                        // console.log("x is: " + x);
+                        if (x%2 == 0)
+                        {
+                            button = $("<button class='stories btn-default'>");
+                        }
+                        else
+                        {
+                            button = $("<button class='stories btn-primary'>");
+                        } 
+                        button.attr("id", name);
+                        button.text(stories[i]);   
+                        lineDiv = $("<div class= 'col-sm-3 " + lineId + "'>"); 
+                        lineDiv.css("margin-bottom", "15px");
+                        lineDiv.append(button);
+                        newDiv.append(lineDiv);
+                        $("#buttons-list").append(newDiv); 
+                    }
+                    // console.log(button);                
+                }
+            }
+
+            $(document).ready(function() {
+                renderbuttons();
+
+                $("#add-story").on("click", function(event){
+                    event.preventDefault();
+                    var newStory = $("#story-input").val();
+                    stories.push(newStory);
+                    $("#buttons-list").empty();
+                    $("#story-input").val("");
+                    renderbuttons();
+                });
+
+                $(".stories").on("click", function(){
+                    event.preventDefault();
+                    var currentStory = $(this).text();
+                    var storyURL = "https://api.giphy.com/v1/gifs/search?q=" + currentStory + "&api_key=btMtfPice0q1trfV84l1O3VnUU3W3fKn&limit=10";
+
+                    $.ajax({
+                        url: storyURL,
+                        method: "GET"
+                    }).then(function(response){
+                        $("#gif-list").empty();
+                        var results = response.data;
+                        console.log(results);
+                        for (i=0; i<11; i++)
+                        {
+                            var newGif = $("<img class='imgClass thumbnail gif'>");
+                            var gif = results[i].images.original.url;
+                            var still = results[i].images.original_still.url;
+                            newGif.attr("src", gif);
+                            newGif.attr("still", still);
+                            newGif.attr("giffy", gif);
+                            newGif.attr("state", "giffy");
+                            $("#gif-list").append(newGif);
+                            //  console.log(still);
+                        }
+                    });
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
